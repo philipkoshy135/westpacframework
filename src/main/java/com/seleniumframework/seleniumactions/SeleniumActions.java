@@ -16,22 +16,42 @@ import org.testng.Reporter;
 public class SeleniumActions{
 
 
+	/**
+	 * This method is used to hover over passed web element using Actions class
+	 * @author  philip_koshy@infosys.com
+	 * @return void
+	 */
 	public static void hover(WebDriver driver, WebElement element) {
 	    Actions action = new Actions(driver);
 		action.moveToElement(element).build().perform();
 	}
 
+	/**
+	 * This method accepts a string values which is an xpath and replaces a specific text with passed substitution value,
+	 * then finds the element and returns the WebElement
+	 * @author  philip_koshy@infosys.com
+	 */
 	public static WebElement getDynamicWebElement(WebDriver driver, String xpathValue, String substitutionValue) {
 		return driver.findElement(By.xpath(xpathValue.replace("%s", substitutionValue)));
 
 	}
 
 
+	/**
+	 * This method accepts a string values which is an xpath and replaces a specific text with passed substitution value,
+	 * then finds the elements and returns the WebElement List
+	 * @author  philip_koshy@infosys.com
+	 */
 	public static List<WebElement> getDynamicWebElementList(WebDriver driver, String xpathValue, String substitutionValue) {
 		return driver.findElements(By.xpath(xpathValue.replace("%s", substitutionValue)));
 
 	}
 
+
+	/**
+	 * This  method returns a wait initialized with fluent wait with passed timeout and polling interval value
+	 * @author  philip_koshy@infosys.com
+	 */
 	public static Wait<WebDriver> fluentWait(WebDriver driver, long timeOut, long pollingInterval) {
 		Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)							
 				.withTimeout(Duration.ofSeconds(timeOut)) 			
@@ -40,7 +60,12 @@ public class SeleniumActions{
 		return wait;
 	}
 	
-    public static void waitForWithoutException(WebDriver driver, WebElement element) {
+	/**
+	 * This  method wait for invisibility of an element without causing an exception, this is used for 
+	 * element that may not always be present in the page
+	 * @author  philip_koshy@infosys.com
+	 */
+    public static void waitForNotPresentWithoutException(WebDriver driver, WebElement element) {
         try {
              if(element.isDisplayed()) {
             	 try {
@@ -55,5 +80,16 @@ public class SeleniumActions{
         } catch (Exception e) {
         	Reporter.log("Loading Widget was not displayed");
         }
+    }
+    
+	/**
+	 *This method is used as while using sendekeys for input elements inside an iframe, certain times 
+	 * it does not perform as expected, causing some leak
+	 * @author  philip_koshy@infosys.com
+	 */
+    public static void type(WebElement element, String text) {
+    	element.click();
+    	element.clear();
+    	element.sendKeys(text);
     }
 }

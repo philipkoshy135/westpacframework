@@ -8,8 +8,8 @@ public class TwinBean extends UserBean {
 	String contributionFrequency;
 
 
-	public TwinBean(String age, String status,String PIR,String riskProfile, String voluntaryContribution,String contributionFrequency, String savingGoalRequirement, String currentKiwiSaverBalance) {
-    	super(age, status, PIR, riskProfile);
+	public TwinBean(String age, String status,String PIR,String riskProfile, String voluntaryContribution,String contributionFrequency, String savingGoalRequirement, String currentKiwiSaverBalance, String projection) {
+    	super(age, status, PIR, riskProfile,projection);
 		this.voluntaryContribution = voluntaryContribution;
 		this.savingGoalRequirement = savingGoalRequirement;
 		this.currentKiwiSaverBalance = currentKiwiSaverBalance;

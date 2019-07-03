@@ -23,8 +23,10 @@ public class MainTest extends BaseClass{
 	test.log(Status.INFO, "Clicking on Get Started Link under Retirement Calculator");
 	kiwiSaverCalculatorsPage.clickOnClickHereToGetStartedLink();
 	kiwiSaverRetirementCalculatorPage.switchToCalculatorFrame();	
-	test.log(Status.INFO, "Verifying Help Icon Messages");
-	kiwiSaverRetirementCalculatorPage.verifyHelpIconAndMessages();
+	test.log(Status.INFO, "Verifying Help Icon Displayed");
+	kiwiSaverRetirementCalculatorPage.verifyHelpIconDisplayed();
+    test.log(Status.INFO, "Verifying Help Icon Messgaes");
+	kiwiSaverRetirementCalculatorPage.verifyHelpIconMessages();
 	}
 
 	@Test(dataProvider="kiwiSaverCalculatorProvider",dataProviderClass=KiwiSaverCalculatorProvider.class)

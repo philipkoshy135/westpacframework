@@ -5,11 +5,14 @@ public class UserBean {
 	String status;
     String PIR;
     String riskProfile;
-    public UserBean(String age, String status, String PIR, String riskProfile) {
+    String calculatedProjection;
+
+	public UserBean(String age, String status, String PIR, String riskProfile, String projection) {
 		this.age = age;
 		this.status = status;
 		this.PIR = PIR;
 		this.riskProfile = riskProfile;
+		this.calculatedProjection = projection;
 	}
     
 	public String getAge() {
@@ -35,5 +38,13 @@ public class UserBean {
 	}
 	public void setRiskProfile(String riskProfile) {
 		this.riskProfile = riskProfile;
+	}
+	
+    public String getCalculatedProjection() {
+		return calculatedProjection;
+	}
+
+	public void setCalculatedProjection(String calculatedProjection) {
+		this.calculatedProjection = calculatedProjection;
 	}
 }

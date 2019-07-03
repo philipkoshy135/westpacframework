@@ -5,10 +5,7 @@ import java.util.Properties;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.testng.ITestResult;
-import org.testng.Reporter;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
@@ -76,7 +73,6 @@ public class BaseClass
 	public void closeApplication()
 	{
 		driver.quit();
-		Reporter.log("=====Browser Session End=====", true);
 		extent.flush();
 	}
 

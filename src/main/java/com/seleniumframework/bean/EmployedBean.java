@@ -4,8 +4,8 @@ public class EmployedBean extends UserBean {
 	String salary;
 	String memberContribution;
     
-    public EmployedBean(String age, String status, String salary, String memberContribution, String PIR, String riskProfile) {
-    	super(age, status, PIR, riskProfile);
+    public EmployedBean(String age, String status, String salary, String memberContribution, String PIR, String riskProfile, String projection) {
+    	super(age, status, PIR, riskProfile, projection);
 		this.salary = salary;
 		this.memberContribution = memberContribution;
 	}

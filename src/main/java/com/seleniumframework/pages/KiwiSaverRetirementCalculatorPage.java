@@ -6,7 +6,6 @@ import static org.testng.Assert.assertTrue;
 import java.util.List;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -17,7 +16,9 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.seleniumframework.bean.EmployedBean;
 import com.seleniumframework.bean.TwinBean;
+import com.seleniumframework.commonutils.Constants;
 import com.seleniumframework.commonutils.HelpIconIdentifier;
+import com.seleniumframework.commonutils.HelpIconMessageIdentifier;
 import com.seleniumframework.commonutils.HelpIconMessages;
 import com.seleniumframework.seleniumactions.SeleniumActions;
 
@@ -83,17 +84,37 @@ public class KiwiSaverRetirementCalculatorPage {
 
 	/**
 	 * The method verifies whether all the help icons are displayed
-	 * and clicks on the icons and verifies the messages displayed 
-	 * This a generic method that has the capability to click and verify all the help icons based on values in Constant Enum class: @see {@link HelpIconIdentifier} class
+	 * This a generic method that has the capability to validate visibility of icons based on values in  Enum class: @see {@link HelpIconIdentifier} class
 	 * @author  philip_koshy@infosys.com
 	 */
-	public void verifyHelpIconAndMessages() {
-		SeleniumActions.waitForWithoutException(driver, loadingMask);
+	public void verifyHelpIconDisplayed() {
+		SeleniumActions.waitForNotPresentWithoutException(driver, loadingMask);
 		SoftAssert softAssert = new SoftAssert();
+		wait.until(ExpectedConditions.elementToBeClickable(employmentStatusSelectedContent));
+		employmentStatusSelectedContent.click();
+		SeleniumActions.getDynamicWebElement(driver, employeeStatusList, Constants.EMPLOYED).click();
 		for (HelpIconIdentifier id : HelpIconIdentifier.values()) {
 			WebElement helpIcon = SeleniumActions.getDynamicWebElement(driver, helpIcons, id.toString());
 			logger.log(Status.INFO, "Verifying "+id.toString()+" icon displayed");	
 			softAssert.assertTrue(helpIcon.isDisplayed(), "Verifying "+id.toString()+" icon displayed");
+		}
+		logger.log(Status.INFO, "Asserting all verification of icon displayed");	
+		softAssert.assertAll();
+		logger.log(Status.PASS, "Icons Verified Successfully");
+	}
+
+	/**
+	 * The method verifies all the help icon messages
+	 * This a generic method that has the capability to click and verify all the help icons based on values in Enum class: @see {@link HelpIconMessageIdentifier} class
+	 * @author  philip_koshy@infosys.com
+	 */
+	public void verifyHelpIconMessages() {
+		SoftAssert softAssert = new SoftAssert();
+		wait.until(ExpectedConditions.elementToBeClickable(employmentStatusSelectedContent));
+		employmentStatusSelectedContent.click();
+		SeleniumActions.getDynamicWebElement(driver, employeeStatusList, Constants.EMPLOYED).click();
+		for (HelpIconMessageIdentifier id : HelpIconMessageIdentifier.values()) {
+			WebElement helpIcon = SeleniumActions.getDynamicWebElement(driver, helpIcons, id.toString());
 			wait.until(ExpectedConditions.elementToBeClickable(helpIcon));
 			helpIcon.click();
 			WebElement helpMessage = SeleniumActions.getDynamicWebElement(driver, helpMessageXpath, id.toString());
@@ -109,36 +130,43 @@ public class KiwiSaverRetirementCalculatorPage {
 				}
 			}
 		}
-		logger.log(Status.INFO, "Asserting all verification of Icon and Messages");	
+		logger.log(Status.INFO, "Asserting all verification of Icon Messages");	
 		softAssert.assertAll();
-		logger.log(Status.PASS, "Icons and Messages Verified Successfully");
+		logger.log(Status.PASS, "Icon Messages Verified Successfully");
 	}
-
+	
+	/**
+	 * This method invokes methods to enter/select values in calculator,click submit form and verify the whether result have been displayed
+	 * @author  philip_koshy@infosys.com
+	 */
 	public void validateRetirementCalculation(Object bean) {
-		enterCalculatorFields(bean);
+		String expectedProjection = enterCalculatorFields(bean);
 		clickSubmitFormButton();
-		verifyCalculationResult();
-		
+		verifyCalculationResult(expectedProjection);
+
 	}
+	
 	/**
 	 * This method invokes corresponding method to
 	 * fill/select values in Kiwi Saver Retirement Calculator based on the user type
 	 * @author  philip_koshy@infosys.com
 	 */
-	public void enterCalculatorFields(Object bean) {
-		SeleniumActions.waitForWithoutException(driver, loadingMask);
+	public String enterCalculatorFields(Object bean) {
+		SeleniumActions.waitForNotPresentWithoutException(driver, loadingMask);
 		wait.until(ExpectedConditions.elementToBeClickable(currentAgeInputBox));
-		currentAgeInputBox.click();
-		currentAgeInputBox.clear();
+		String calculatedProjection;
 		if(bean instanceof EmployedBean) {
 			EmployedBean employedBean = (EmployedBean) bean;
 			enterCalculatorFieldsForEmployed(employedBean);
+			calculatedProjection = employedBean.getCalculatedProjection();
 		}
 		else {
 			TwinBean twinBean = (TwinBean) bean;
-			enterCalculatorFieldsForSelfAndNotEmployed(twinBean);	
+			enterCalculatorFieldsForSelfAndNotEmployed(twinBean);
+			calculatedProjection = twinBean.getCalculatedProjection();
 		}	
-		
+		return calculatedProjection;
+
 	}
 
 	/**
@@ -146,11 +174,10 @@ public class KiwiSaverRetirementCalculatorPage {
 	 * @author  philip_koshy@infosys.com
 	 * @return void
 	 */
-
 	public void enterCalculatorFieldsForEmployed(EmployedBean employedBean) {
 		logger.log(Status.INFO, "Entering values for Employment Status: "+employedBean.getStatus());
 		enterCommonCalculatorFields(employedBean.getAge(), employedBean.getStatus(), employedBean.getPIR(),  employedBean.getRiskProfile().toLowerCase());	
-		salaryInputBox.sendKeys(employedBean.getSalary());
+		SeleniumActions.type(salaryInputBox, employedBean.getSalary());
 		logger.log(Status.PASS, "Entered Salary as : "+ employedBean.getSalary());
 		SeleniumActions.getDynamicWebElement(driver, kiwiSaverMemberContributionRadioButton, employedBean.getMemberContribution()).click();
 		logger.log(Status.PASS, "Selected Member Contribution as : "+ employedBean.getMemberContribution());
@@ -159,17 +186,15 @@ public class KiwiSaverRetirementCalculatorPage {
 	/**
 	 * This method fills/selects values for fields in Kiwi Saver Retirement Calculator for Not/Self Employed User
 	 * @author  philip_koshy@infosys.com
-	 * @return void
 	 */
-
 	public void enterCalculatorFieldsForSelfAndNotEmployed(TwinBean twinBean) {
 		logger.log(Status.INFO, "Entering values for Employment Status: "+twinBean.getStatus());
-		enterCommonCalculatorFields(twinBean.getAge(), twinBean.getStatus(), twinBean.getPIR(),  twinBean.getRiskProfile().toLowerCase());		
-		currentKiwiSaverBalanceInputBox.sendKeys(twinBean.getCurrentKiwiSaverBalance());
+		enterCommonCalculatorFields(twinBean.getAge(), twinBean.getStatus(), twinBean.getPIR(),  twinBean.getRiskProfile().toLowerCase());	
+		SeleniumActions.type(currentKiwiSaverBalanceInputBox, twinBean.getCurrentKiwiSaverBalance());
 		logger.log(Status.PASS, "Entered Kiwi Saver Balance as : "+ twinBean.getCurrentKiwiSaverBalance());
-		savingsGoalInputBox.sendKeys(twinBean.getSavingGoalRequirement());
+		SeleniumActions.type(savingsGoalInputBox, twinBean.getSavingGoalRequirement());
 		logger.log(Status.PASS, "Entered Saving Goal requirement as : "+ twinBean.getSavingGoalRequirement());
-		voluntaryContributionsInputBox.sendKeys(twinBean.getVoluntaryContribution());
+		SeleniumActions.type(voluntaryContributionsInputBox, twinBean.getVoluntaryContribution());
 		logger.log(Status.PASS, "Entered Voluntary Contribution as : "+ twinBean.getVoluntaryContribution());
 		voluntaryContributionFrequencySelectedContent.click();
 		SeleniumActions.getDynamicWebElement(driver, voluntaryContributionList, twinBean.getContributionFrequency()).click();
@@ -179,12 +204,9 @@ public class KiwiSaverRetirementCalculatorPage {
 	/**
 	 * This method fills/selects values for common fields in Kiwi Saver Retirement Calculator for all user Types
 	 * @author  philip_koshy@infosys.com
-	 * @return void
 	 */
-
-
 	public void enterCommonCalculatorFields(String age, String employmentStatus, String pirRate, String riskProfile) {
-		currentAgeInputBox.sendKeys(age);
+		SeleniumActions.type(currentAgeInputBox, age);
 		logger.log(Status.PASS, "Entered Age as : "+ age);
 		employmentStatusSelectedContent.click();
 		SeleniumActions.getDynamicWebElement(driver, employeeStatusList, employmentStatus).click();
@@ -195,14 +217,22 @@ public class KiwiSaverRetirementCalculatorPage {
 		SeleniumActions.getDynamicWebElement(driver, riskProfileRadioButton,riskProfile).click();
 		logger.log(Status.PASS, "Selected Risk Profile as : "+ riskProfile);
 	}
-	
+
+	/**
+	 * This method clicks on the submit button after all the values have been entered to the calculator
+	 * @author  philip_koshy@infosys.com
+	 */
 	public void clickSubmitFormButton() {
 		wait.until(ExpectedConditions.elementToBeClickable(submitFormButton)).click();
 		logger.log(Status.PASS, "Clicked Submit Form Button");
 	}
-	
-	public void verifyCalculationResult() {
-		assertTrue(wait.until(ExpectedConditions.visibilityOf(resultValue)).isDisplayed(),"Verifiying Calculation Result Displayed");
-		logger.log(Status.PASS, "Result was calculated as "+resultValue.getText());
+
+	/**
+	 * This method verifies whether the result have been calculated and displayed
+	 * @author  philip_koshy@infosys.com
+	 */
+	public void verifyCalculationResult(String expectedProjection) {
+		assertEquals(wait.until(ExpectedConditions.visibilityOf(resultValue)).getText(), expectedProjection,"Verifiying Calculation Result Displayed");
+		logger.log(Status.PASS, "Result was calculated as expected value : "+resultValue.getText());
 	}
 }

@@ -2,8 +2,6 @@ package com.seleniumframework.pages;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.AcceptedW3CCapabilityKeys;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -49,7 +47,6 @@ public class HomePage {
 	 *
 	 * @author  philip_koshy@infosys.com
 	 */
-
 	public void navigateToHomePage() {
 		driver.navigate().to("https://www.westpac.co.nz/");
 		logger.log(Status.PASS, "Navigated to HomePage");

@@ -13,7 +13,7 @@ public class MainTest extends BaseClass{
 	KiwiSaverRetirementCalculatorPage kiwiSaverRetirementCalculatorPage;   
 
 	@Test
-	public void validateKiwiSaverRetirementCalculator() throws NoSuchFieldException, SecurityException {
+	public void verifyKiwiSaverCalculatorIconsAndMessages() throws NoSuchFieldException, SecurityException {
 	test = extent.createTest("Validate KiwiSaver Retirement Calculator Help Icons");
 	homepage= new HomePage(driver, test);
 	kiwiSaverCalculatorsPage = new KiwiSaverCalculatorsPage(driver, test);

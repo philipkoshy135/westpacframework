@@ -1,7 +1,6 @@
 package com.seleniumframework.pages;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 import org.openqa.selenium.WebDriver;
@@ -94,9 +93,9 @@ public class KiwiSaverRetirementCalculatorPage {
 		employmentStatusSelectedContent.click();
 		SeleniumActions.getDynamicWebElement(driver, employeeStatusList, Constants.EMPLOYED).click();
 		for (HelpIconIdentifier id : HelpIconIdentifier.values()) {
-			WebElement helpIcon = SeleniumActions.getDynamicWebElement(driver, helpIcons, id.toString());
 			logger.log(Status.INFO, "Verifying "+id.toString()+" icon displayed");	
-			softAssert.assertTrue(helpIcon.isDisplayed(), "Verifying "+id.toString()+" icon displayed");
+			WebElement helpIcon = SeleniumActions.getDynamicWebElement(driver, helpIcons, id.toString());
+			softAssert.assertTrue(SeleniumActions.isDisplayed(helpIcon), "Verifying "+id.toString()+" icon displayed");
 		}
 		logger.log(Status.INFO, "Asserting all verification of icon displayed");	
 		softAssert.assertAll();
@@ -134,7 +133,7 @@ public class KiwiSaverRetirementCalculatorPage {
 		softAssert.assertAll();
 		logger.log(Status.PASS, "Icon Messages Verified Successfully");
 	}
-	
+
 	/**
 	 * This method invokes methods to enter/select values in calculator,click submit form and verify the whether result have been displayed
 	 * @author  philip_koshy@infosys.com
@@ -145,9 +144,9 @@ public class KiwiSaverRetirementCalculatorPage {
 		verifyCalculationResult(expectedProjection);
 
 	}
-	
+
 	/**
-	 * This method invokes corresponding method to
+	 * This method invokes corresponding methods to
 	 * fill/select values in Kiwi Saver Retirement Calculator based on the user type
 	 * @author  philip_koshy@infosys.com
 	 */

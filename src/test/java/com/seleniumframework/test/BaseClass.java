@@ -27,6 +27,13 @@ public class BaseClass
 	InputStream inputStream;
 	Properties prop ;
 
+	/**
+	 * This method runs before running any of the suite or test method
+	 * This method invokes the method to create the webdriver,
+	 * builds the constructs required for Extent report
+	 *
+	 * @author  philip_koshy@infosys.com
+	 */
 	@BeforeSuite
 	public void setupApplication() throws IOException
 	{
@@ -39,7 +46,13 @@ public class BaseClass
 		driver.manage().window().maximize();
 		driver.get(prop.getProperty("url"));
 	}
-
+	
+	/**
+	 * Based on the browser name given in config.properties file, this method creates the corresponding 
+	 * webdriver. Currently only implemented for chrome. More browsers can be implemented easily
+	 *
+	 * @author  philip_koshy@infosys.com
+	 */
 	public void createWebDriver() {
 		String browser = prop.getProperty("browser");
 		switch(browser) {
@@ -53,7 +66,11 @@ public class BaseClass
 		}
 	}
 
-
+	/**
+	 * This method is invoked after each test method and using TestNG listners based on whether
+	 * the test is failure,success or skip, corresponding entry is made into report
+	 * @author  philip_koshy@infosys.com
+	 */
 	@AfterMethod
 	public void getResult(ITestResult result) {
 		if(result.getStatus() == ITestResult.FAILURE) {
@@ -69,6 +86,11 @@ public class BaseClass
 		}
 	}
 
+	/**
+	 * This method is invoked after all the test/suite is executed and this tear down the driver and 
+	 * creates the final emailable extent report
+	 * @author  philip_koshy@infosys.com
+	 */
 	@AfterSuite
 	public void closeApplication()
 	{

@@ -232,7 +232,8 @@ public class KiwiSaverRetirementCalculatorPage {
 	 * @author  philip_koshy@infosys.com
 	 */
 	public void verifyCalculationResult(String expectedProjection) {
-		assertEquals(wait.until(ExpectedConditions.visibilityOf(resultValue)).getText(), expectedProjection,"Verifiying Calculation Result Displayed");
+		String actualCalculatedValue = wait.until(ExpectedConditions.visibilityOf(resultValue)).getText().replaceAll("\\r\\n|\\r|\\n", " ");
+		assertEquals(actualCalculatedValue, expectedProjection,"Verifiying Calculation Result Displayed");
 		logger.log(Status.PASS, "Result was calculated as expected value : "+resultValue.getText());
 	}
 }
